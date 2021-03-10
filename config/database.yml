@@ -23,7 +23,10 @@ default: &default
 
 development:
   <<: *default
-  database: event_api_development
+  database: <%= "event_api_development#{
+    branch = `git rev-parse --abbrev-ref HEAD`[0..-2].underscore
+    (ENV['DB'] ? '_' + ENV['DB'] : '_' + branch) unless branch == 'dev'
+  }" %>
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.
