@@ -1,7 +1,31 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+ActiveRecord::Base.transaction {
+
+  25.times do
+    user_params = {
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name,
+      email: Faker::Internet.unique.email
+    }
+
+    User.create(user_params)
+  end
+
+  10.times do
+    kind = rand(0..1)
+    date = Faker::Date.between(from: Date.today, to: 7.days.after)
+    event_params = {
+      user_id: User.pluck(:id).sample,
+      speaker_id: User.pluck(:id).sample,
+      kind: kind,
+      date: date,
+      start_at: Faker::Time.between_dates(from: date, to: date, period: :morning),
+      end_at: Faker::Time.between_dates(from: date, to: date, period: :afternoon),
+      name: Faker::CryptoCoin.coin_name,
+      location: Faker::WorldCup.stadium,
+      description: Faker::Lorem.paragraph,
+    }
+    event_params[:limit] = rand(1..5) if kind == 0
+
+    Event.create(event_params)
+  end
+}
