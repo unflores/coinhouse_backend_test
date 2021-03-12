@@ -12,8 +12,8 @@ class Event < ApplicationRecord
 
   validates_presence_of :date, :start_at, :end_at, :name, :location
 
-  validate :can_not_be_in_the_past, :can_not_start_in_the_past,
-    :can_not_start_after_end, :can_not_end_before_start
+  validate :can_not_be_in_the_past, :can_not_start_in_the_past, :can_not_start_after_end
+  :must_be_the_same_day
 
   private
   def can_not_exceed_limit
@@ -21,18 +21,18 @@ class Event < ApplicationRecord
   end
 
   def can_not_be_in_the_past
-    errors.add(:date, 'can not be in the past') if date < Date.today
+    errors.add(:date, 'can not be in the past') if date && date < Date.today
   end
 
   def can_not_start_in_the_past
-    errors.add(:start_at, 'can not be in the past') if start_at >= Time.now
+    errors.add(:start_at, 'can not be in the past') if start_at && start_at < Time.now
   end
 
   def can_not_start_after_end
-    errors.add(:start_at, 'can not be greater than end_at') if start_at >= end_at
+    errors.add(:start_at, 'can not be greater than end_at') if start_at && end_at && start_at >= end_at
   end
 
-  def can_not_end_before_start
-    errors.add(:end_at, 'can not be lower than start_at') if end_at <= start_at
+  def must_be_the_same_day
+    errors.add(:start_at, 'can not be greater than end_at') if start_at && end_at && start_at.to_date != end_at.to_date
   end
 end

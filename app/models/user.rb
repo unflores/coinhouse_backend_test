@@ -5,10 +5,7 @@ class User < ApplicationRecord
 
   has_and_belongs_to_many :registrations, class_name: 'Event'
 
-  validates :email,
-    presence: true,
-    uniqueness: true,
-    format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   validates_presence_of :first_name, :last_name
 end
