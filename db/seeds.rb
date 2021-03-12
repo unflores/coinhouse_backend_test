@@ -12,14 +12,14 @@ ActiveRecord::Base.transaction {
 
   10.times do
     kind = rand(0..1)
-    date = Faker::Date.between(from: Date.today, to: 7.days.after)
+    date = Faker::Time.forward(days: 1, period: :morning)
     event_params = {
       user_id: User.pluck(:id).sample,
       speaker_id: User.pluck(:id).sample,
       kind: kind,
       date: date,
-      start_at: Faker::Time.between_dates(from: date, to: date, period: :morning),
-      end_at: Faker::Time.between_dates(from: date, to: date, period: :afternoon),
+      start_at: Faker::Time.between_dates(from: date, to: date + 1.hour),
+      end_at: Faker::Time.between_dates(from: date + 1.hour, to: date.end_of_day),
       name: Faker::CryptoCoin.coin_name,
       location: Faker::WorldCup.stadium,
       description: Faker::Lorem.paragraph,

@@ -19,9 +19,9 @@ ActiveRecord::Schema.define(version: 2021_03_11_162133) do
     t.bigint "user_id"
     t.bigint "speaker_id"
     t.integer "kind"
-    t.date "date", null: false
-    t.time "start_at", null: false
-    t.time "end_at", null: false
+    t.datetime "date", null: false
+    t.datetime "start_at", null: false
+    t.datetime "end_at", null: false
     t.string "name", null: false
     t.string "location", null: false
     t.text "description"
