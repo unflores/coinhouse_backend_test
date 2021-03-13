@@ -25,7 +25,7 @@ default: &default
 development:
   <<: *default
   database: <%= "event_api_development#{
-    branch = `git rev-parse --abbrev-ref HEAD`[0..-2].underscore
+    branch = `git rev-parse --abbrev-ref HEAD`
     (ENV['DB'] ? '_' + ENV['DB'] : '_' + branch) unless branch == 'dev'
   }" %>
 
