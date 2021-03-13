@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Events", type: :request do
-  before(:all) { build_event.save } #todo remove after fixing seeding issue
+  before(:all) do; 2.times { build_event.save } end #todo remove after fixing seeding issue
   let(:params) do
     {
       event: {
@@ -28,15 +28,47 @@ RSpec.describe "Events", type: :request do
   end
 
   describe "GET /index" do
-    before(:each) { get events_path, as: :json }
+    context 'without params' do
+      before(:each) { get events_path, as: :json }
 
-    it 'return 200' do
-      expect(response.status).to eq(200)
+      it 'return 200' do
+        expect(response.status).to eq(200)
+      end
+
+      it 'return an event' do
+        id = JSON.parse(response.body).first['id']
+        expect(Event.find(id)).to be_a Event
+      end
     end
 
-    it 'return an event' do
-      id = JSON.parse(response.body).first['id']
-      expect(Event.find(id)).to be_a Event
+    context 'with params' do
+      let(:event) { Event.last }
+      let(:query) do
+        { q: {}, per: 1, page: 0 }
+      end
+
+      it 'return search' do
+        query[:q] = { id_eq: event.id }
+        get events_path(query), as: :json
+
+        id = JSON.parse(response.body).first['id']
+        expect(Event.find(id)).to eq event
+      end
+
+      it 'return last' do
+        query[:page] = event.id - 1
+        get events_path(query), as: :json
+
+        id = JSON.parse(response.body).first['id']
+        expect(Event.find(id)).to eq event
+      end
+
+      it 'return nothing' do
+        query[:per] = 0
+        get events_path(query), as: :json
+
+        expect(JSON.parse(response.body)).to be_empty
+      end
     end
   end
 

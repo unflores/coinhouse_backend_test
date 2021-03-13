@@ -3,7 +3,10 @@ class EventsController < ApplicationController
   before_action -> { set_user(:user); set_user(:speaker) }, only: [:create]
 
   def index
-    @events = Event.includes(:user, :speaker, :attendees)
+    query = format_params(:q) if params[:q]
+    @q = Event.ransack(query)
+
+    @events = @q.result.includes(:user, :speaker, :attendees).limit(params[:per]).offset(params[:page])
   end
 
   def create
