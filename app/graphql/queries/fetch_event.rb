@@ -6,9 +6,9 @@ class Queries::FetchEvent < Queries::BaseQuery
   def resolve(id:)
     Event.includes(:user, :speaker, :attendees).find(id)
   rescue ActiveRecord::RecordNotFound => _e
-    GraphQL::ExecutionError.new('Note does not exist.')
+    GraphQL::ExecutionError.new('event does not exist')
   rescue ActiveRecord::RecordInvalid => e
-    GraphQL::ExecutionError.new("Invalid attributes for #{e.record.class}:"\
+    GraphQL::ExecutionError.new("invalid attributes for #{e.record.class}:"\
                                 " #{e.record.errors.full_messages.join(', ')}")
   end
 end

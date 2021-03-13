@@ -1,6 +1,7 @@
 class Queries::FetchEvents < Queries::BaseQuery
 
   type [Types::EventType], null: false
+
   argument :speaker_id, ID, required: false
   argument :kind, Integer, required: false
   argument :date, GraphQL::Types::ISO8601DateTime, required: false
@@ -18,7 +19,7 @@ class Queries::FetchEvents < Queries::BaseQuery
     when kwargs.key?(:date)
       events = events.where(date: Date.parse(kwargs[:date]))
     when kwargs.key?(:location)
-      events = events.where("location ilike ?", "%#{kwargs[:location]}%")
+      events = events.where("LOCATION ILIKE ?", "%#{kwargs[:location]}%")
     when kwargs.key?(:limit)
       events = events.limit(kwargs[:limit])
     end
