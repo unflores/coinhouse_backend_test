@@ -8,6 +8,8 @@ module Types
     # They will be entry points for queries on your schema.
 
     field :fetch_events, resolver: Queries::FetchEvents
+    field :fetch_event, resolver: Queries::FetchEvent
+
     field :fetch_users, resolver: Queries::FetchUsers
   end
 end

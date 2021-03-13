@@ -1,4 +1,4 @@
 class Types::EventKind < Types::BaseEnum
-  value "WORKSHOP", value: 'workshop'
-  value "OFFICE_HOURS", value: 'office_hours'
+  value "workshop", value: 'workshop'
+  value "office_hours", value: 'office_hours'
 end
