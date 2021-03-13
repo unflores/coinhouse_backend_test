@@ -3,6 +3,7 @@ class Types::EventType < GraphQL::Schema::Object
 
   field :id, ID, null: false
   field :user, Types::UserType, null: false
+  field :speaker_id, ID, null: false
   field :speaker, Types::UserType, null: false
   field :attendees, [Types::UserType], null: true
   field :kind, Types::EventKind, null: false
