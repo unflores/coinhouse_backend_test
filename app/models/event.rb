@@ -16,8 +16,8 @@ class Event < ApplicationRecord
   :must_be_the_same_day
 
   private
-  def can_not_exceed_limit
-    errors.add(:attendees, 'event is full') if limit && limit == attendees.size
+  def can_not_exceed_limit(_)
+    raise ArgumentError.new('Event is full') if workshop? && limit && attendees.size >= limit
   end
 
   def can_not_be_in_the_past
@@ -25,7 +25,7 @@ class Event < ApplicationRecord
   end
 
   def can_not_start_in_the_past
-    errors.add(:start_at, 'can not be in the past') if start_at && start_at < Time.now
+    errors.add(:start_at, 'can not be in the past') if start_at && start_at < 1.minute.ago
   end
 
   def can_not_start_after_end
