@@ -5,24 +5,25 @@ RSpec.describe "Events", type: :request do
     ActionController::HttpAuthentication::Token.encode_credentials(User.last.token)
   end
 
+  # todo remove after fixing seeding issue
   before(:all) do
     2.times { build_event.save }
     build_user.save
-  end #todo remove after fixing seeding issue
+  end
 
   let(:params) do
     {
       event: {
         kind: 'workshop',
-        date: Date.today.to_s,
-        start_at: Time.now,
-        end_at: Time.now.end_of_day.strftime("%I:%M:%S %z"),
+        date: DateTime.now.tomorrow.to_date,
+        start_at: DateTime.now.tomorrow.end_of_minute.strftime("%H:%M:%S %z"),
+        end_at: DateTime.now.tomorrow.end_of_day,
         name: 'Hello World',
         location: 'Narnia',
         description: Faker::Lorem.paragraph,
         limit: 5
       },
-      user: {
+      current_user: {
         first_name: 'David',
         last_name: 'Copperfield',
         email: 'dave@yolo.com'
@@ -64,7 +65,7 @@ RSpec.describe "Events", type: :request do
       end
 
       it 'return last' do
-        query[:page] = event.id - 1
+        query[:page] = Event.count - 1
         get events_path(query), as: :json
 
         id = JSON.parse(response.body).first['id']
@@ -81,27 +82,155 @@ RSpec.describe "Events", type: :request do
   end
 
   describe "POST /create" do
-    it 'return 200' do
+    it 'return 201' do
       post events_path, params: params, as: :json, headers: { Authorization: format_token }
-      expect(response.status).to eq(200)
-    end
-
-    it 'return 422 when a params is missing' do
-      post events_path, params: params.except!(:speaker), as: :json, headers: { Authorization: format_token }
-      expect(response.status).to eq(422)
+      expect(response.status).to eq(201)
     end
 
     it 'return 422 when a validation failed' do
-      data = params
-      post events_path, params: data[:event].delete(:name), as: :json, headers: { Authorization: format_token }
+      data = params.clone
+      data[:event] = data[:event].except(:name)
+      post events_path, params: data, as: :json, headers: { Authorization: format_token }
       expect(response.status).to eq(422)
+    end
+
+    it 'return 404 when a params is missing' do
+      post events_path, params: params.except(:speaker), as: :json, headers: { Authorization: format_token }
+      expect(response.status).to eq(404)
     end
 
     it 'return 422 when a date or time is not well formatted' do
       data = params
-      data[:event][:start_at] = '!@#$!@#!'
+      data[:event][:date] = '!@#$!@#!'
       post events_path, params: data, as: :json, headers: { Authorization: format_token }
       expect(response.status).to eq(422)
+    end
+  end
+
+  describe 'POST /:id/attend' do
+    it 'return 201' do
+      post event_attend_path(Event.last.id), as: :json, headers: { Authorization: format_token }
+      expect(response.status).to eq(201)
+    end
+
+    it 'return 201' do
+      post event_attend_path(Event.last.id), params: params.slice(:current_user), as: :json
+      expect(response.status).to eq(201)
+    end
+
+    it 'return 404' do
+      post event_attend_path(81379124), as: :json, headers: { Authorization: format_token }
+      expect(response.status).to eq(404)
+    end
+
+    it 'return 409' do
+      post event_attend_path(Event.last.id), as: :json, headers: { Authorization: format_token }
+      post event_attend_path(Event.last.id), as: :json, headers: { Authorization: format_token }
+      expect(response.status).to eq(409)
+    end
+
+    it 'return 404' do
+      post event_attend_path(Event.last.id), as: :json
+      expect(response.status).to eq(404)
+    end
+  end
+
+  describe 'POST /:id/unregister' do
+    it 'return 200' do
+      post event_unregister_path(Event.last.id), as: :json, headers: { Authorization: format_token }
+      expect(response.status).to eq(200)
+    end
+
+    it 'return 200' do
+      post event_unregister_path(Event.last.id), params: params.slice(:current_user), as: :json
+      expect(response.status).to eq(200)
+    end
+
+    it 'return 404' do
+      post event_unregister_path(81379124), as: :json, headers: { Authorization: format_token }
+      expect(response.status).to eq(404)
+    end
+
+    it 'return 404' do
+      post event_unregister_path(Event.last.id), as: :json
+
+      expect(response.status).to eq(404)
+    end
+  end
+
+  let(:data) do
+    {
+      event: {
+        name: Event.last.name,
+        location: Event.last.location,
+      },
+      current_user: {
+        first_name: 'David',
+        last_name: 'Copperfield',
+        email: 'dave@yolo.com'
+      },
+      speaker: {
+        first_name: 'Elon',
+        last_name: 'Musk',
+        email: 'elon@spacex.com'
+      }
+    }
+  end
+
+  describe 'POST /attend' do
+    it 'return 201' do
+      post attend_events_path, params: data.slice(:event), as: :json, headers: { Authorization: format_token }
+      expect(response.status).to eq(201)
+    end
+
+    it 'return 201' do
+      post attend_events_path, params: data.slice(:current_user, :event), as: :json
+      expect(response.status).to eq(201)
+    end
+
+    it 'return 404' do
+      post attend_events_path, as: :json, headers: { Authorization: format_token }
+      expect(response.status).to eq(404)
+    end
+
+    it 'return 404' do
+      post attend_events_path, as: :json
+      expect(response.status).to eq(404)
+    end
+
+    it 'return 409' do
+      post attend_events_path, params: data.slice(:event), headers: { Authorization: format_token }, as: :json
+      post attend_events_path, params: data.slice(:event), headers: { Authorization: format_token }, as: :json
+      expect(response.status).to eq(409)
+    end
+
+    it 'return 409' do
+      post attend_events_path, params: data.slice(:current_user, :event), as: :json, headers: { Authorization: format_token }
+      post attend_events_path, params: data.slice(:current_user, :event), as: :json, headers: { Authorization: format_token }
+      expect(response.status).to eq(409)
+    end
+  end
+
+  describe 'POST /unregister' do
+    it 'return 200' do
+      post events_path, params: data, as: :json, headers: { Authorization: format_token }
+      post unregister_events_path, params: data.slice(:event), headers: { Authorization: format_token }, as: :json
+      expect(response.status).to eq(200)
+    end
+
+    it 'return 200' do
+      post unregister_events_path, params: data.slice(:current_user, :event), as: :json
+      expect(response.status).to eq(200)
+    end
+
+    it 'return 404' do
+      post unregister_events_path, as: :json, headers: { Authorization: format_token }
+      expect(response.status).to eq(404)
+    end
+
+    it 'return 404' do
+      post unregister_events_path, as: :json
+      expect(response.status).to eq(404)
     end
   end
 end
