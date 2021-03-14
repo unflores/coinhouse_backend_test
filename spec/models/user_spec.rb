@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
+  before(:all) { build_event.save } #todo remove after fixing seeding issue
   subject { build_user }
 
   describe 'validation' do
@@ -33,6 +34,14 @@ RSpec.describe User, type: :model do
         subject.dup.save
         expect(subject).to_not be_valid
       end
+    end
+  end
+
+  describe 'custom validation' do
+    it 'can not have duplicates event' do
+      Event.last.update(kind: 'office_hours')
+      2.times { subject.registrations << Event.last }
+      expect { subject.save validate: false }.to raise_error(ActiveRecord::RecordNotUnique)
     end
   end
 end

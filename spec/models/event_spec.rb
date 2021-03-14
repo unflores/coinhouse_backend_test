@@ -38,6 +38,24 @@ RSpec.describe Event, type: :model do
   end
 
   describe 'custom validation' do
+    it 'can not have duplicates user' do
+      subject.kind = 'office_hours'
+      2.times { subject.attendees << User.last }
+      expect { subject.save validate: false }.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+
+    it 'ignore limit if office_hours' do
+      subject.kind = 'office_hours'
+      subject.limit = nil
+      expect { subject.attendees << User.last }.not_to raise_error
+    end
+
+    it 'can not exceed limit if workshop' do
+      subject.kind = 'workshop'
+      subject.limit = 0
+      expect { subject.attendees << User.last }.to raise_error(ArgumentError)
+    end
+
     context 'time' do
       it 'can not be in the past' do
         subject.date = Date.yesterday
