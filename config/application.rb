@@ -46,6 +46,6 @@ module EventApi
     config.api_only = true
 
     #config.autoload_paths << Rails.root.join('app', 'graphql')
-    #config.autoload_paths << Rails.root.join('app', 'graphql','types')
+    config.autoload_paths << Rails.root.join('lib')
   end
 end

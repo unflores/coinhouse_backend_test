@@ -1,7 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe "Events", type: :request do
-  before(:all) do; 2.times { build_event.save } end #todo remove after fixing seeding issue
+  def format_token
+    ActionController::HttpAuthentication::Token.encode_credentials(User.last.token)
+  end
+
+  before(:all) do
+    2.times { build_event.save }
+    build_user.save
+  end #todo remove after fixing seeding issue
+
   let(:params) do
     {
       event: {
@@ -29,7 +37,7 @@ RSpec.describe "Events", type: :request do
 
   describe "GET /index" do
     context 'without params' do
-      before(:each) { get events_path, as: :json }
+      before(:each) { get events_path, as: :json, headers: { Authorization: format_token } }
 
       it 'return 200' do
         expect(response.status).to eq(200)
@@ -49,7 +57,7 @@ RSpec.describe "Events", type: :request do
 
       it 'return search' do
         query[:q] = { id_eq: event.id }
-        get events_path(query), as: :json
+        get events_path(query), as: :json, headers: { Authorization: format_token }
 
         id = JSON.parse(response.body).first['id']
         expect(Event.find(id)).to eq event
@@ -57,7 +65,7 @@ RSpec.describe "Events", type: :request do
 
       it 'return last' do
         query[:page] = event.id - 1
-        get events_path(query), as: :json
+        get events_path(query), as: :json, headers: { Authorization: format_token }
 
         id = JSON.parse(response.body).first['id']
         expect(Event.find(id)).to eq event
@@ -65,7 +73,7 @@ RSpec.describe "Events", type: :request do
 
       it 'return nothing' do
         query[:per] = 0
-        get events_path(query), as: :json
+        get events_path(query), as: :json, headers: { Authorization: format_token }
 
         expect(JSON.parse(response.body)).to be_empty
       end
@@ -74,7 +82,7 @@ RSpec.describe "Events", type: :request do
 
   describe "POST /create" do
     it 'return 200' do
-      post events_path, params: params, as: :json
+      post events_path, params: params, as: :json, headers: { Authorization: format_token }
       expect(response.status).to eq(200)
     end
 
@@ -92,7 +100,7 @@ RSpec.describe "Events", type: :request do
     it 'return 422 when a date or time is not well formatted' do
       data = params
       data[:event][:start_at] = '!@#$!@#!'
-      post events_path, params: data, as: :json
+      post events_path, params: data, as: :json, headers: { Authorization: format_token }
       expect(response.status).to eq(422)
     end
   end

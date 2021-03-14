@@ -1,6 +1,7 @@
 class EventsController < ApplicationController
 
   before_action -> { set_user(:user); set_user(:speaker) }, only: [:create]
+  before_action :authenticate, only: [:index, :create]
 
   def index
     query = format_params(:q) if params[:q]
@@ -11,8 +12,12 @@ class EventsController < ApplicationController
 
   def create
     @event = Event.create(user_id: @user.id, speaker_id: @speaker.id, **event_params)
-  ensure
-    raise ArgumentError.new(format_argument_error(@event.errors.messages)) if @event.invalid?
+
+    if @event.valid?
+      render json: { message: 'logged' }, status: :created
+    else
+      raise ArgumentError.new(format_argument_error(@event.errors.messages))
+    end
   end
 
   private
