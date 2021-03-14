@@ -1,8 +1,18 @@
 json.array! @events do |event|
   json.ignore_nil!
   json.id event.id
-  json.creator event.user
-  json.speaker event.speaker
+  json.creator do
+    json.id event.user.id
+    json.first_name event.user.first_name
+    json.last_name event.user.last_name
+    json.email_name event.user.email
+  end
+  json.speaker do
+    json.id event.speaker.id
+    json.first_name event.speaker.first_name
+    json.last_name event.speaker.last_name
+    json.email event.speaker.email
+  end
   json.kind event.kind
   json.name event.name
   json.description event.description

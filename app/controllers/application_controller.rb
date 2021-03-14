@@ -35,7 +35,7 @@ class ApplicationController < ActionController::API
   end
 
   def authenticate
-    authenticate_or_request_with_http_token do |token, _|
+    authenticate_or_request_with_http_token do |token,_|
       if current_user = User.find_by(token: token)
         ActiveSupport::SecurityUtils.secure_compare(token, current_user.token)
       end
