@@ -10,12 +10,9 @@ class UsersController < ApplicationController
       user.password = user_params[:password]
     end
 
-    if @user.valid?
-      session[:current_user_id] = @user.id
-      render json: { message: 'account created' }, status: :created
-    else
-      raise ArgumentError.new(format_argument_error(@user.errors.messages))
-    end
+    raise ArgumentError.new(format_argument_error(@user.errors.messages)) if @user.invalid?
+
+    render json: { message: 'account created' }, status: :created
   end
 
   private
