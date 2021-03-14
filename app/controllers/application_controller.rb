@@ -4,7 +4,7 @@ class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Token
 
   rescue_from ActionController::ParameterMissing do |e|
-    render json: { error: e.message[/[^\\W\n]*/].capitalize }, status: :unprocessable_entity
+    render json: { error: e.message[/[^\\W\n]*/].capitalize }, status: :not_found
   end
 
   rescue_from JSON::ParserError do |e|
@@ -48,7 +48,7 @@ class ApplicationController < ActionController::API
   end
 
   def bearer_token
-    token_and_options(request)[0]
+    token_and_options(request)&.first
   end
 
   # todo render json error

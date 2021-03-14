@@ -23,6 +23,6 @@ json.array! @events do |event|
   end
   json.limit event.limit
   json.date event.date
-  json.start_at event.start_at.strftime("%I:%M:%S %z")
-  json.end_at event.end_at.strftime("%I:%M:%S %z")
+  json.start_at event.start_at.strftime("%H:%M:%S %z")
+  json.end_at event.end_at.strftime("%H:%M:%S %z")
 end

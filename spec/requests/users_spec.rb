@@ -19,8 +19,7 @@ RSpec.describe "Users", type: :request do
     end
 
     it 'return 422 when a validation failed' do
-      data = params
-      post users_path, params: data[:user].delete(:first_name), as: :json
+      post users_path, params: { user: params[:user].except(:first_name) }, as: :json
       expect(response.status).to eq(422)
     end
 
