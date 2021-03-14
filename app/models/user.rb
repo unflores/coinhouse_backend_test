@@ -1,5 +1,8 @@
 class User < ApplicationRecord
 
+  has_secure_password
+  has_secure_token
+
   has_many :events do
     def workshops; where(kind: 0) end
     def office_hours; where(kind: 1) end
@@ -17,4 +20,5 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
 
   validates_presence_of :first_name, :last_name
+  validates_uniqueness_of :token
 end

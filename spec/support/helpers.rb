@@ -3,7 +3,8 @@ module Helpers
   def build_user
     User.new(first_name: Faker::Name.first_name,
              last_name: Faker::Name.last_name,
-             email: Faker::Internet.email)
+             email: Faker::Internet.email,
+             password: 'password')
   end
 
   def build_event
@@ -22,6 +23,13 @@ module Helpers
 
     Event.new(event_params)
   end
+
+  # class ControllerSpecHelper
+  #   def authenticate
+  #     token = User.last.token
+  #     request.headers['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Token.encode_credentials(token)
+  #   end
+  # end
 end
 
 RSpec.configure do |config|
