@@ -87,13 +87,13 @@ RSpec.describe "Events", type: :request do
     end
 
     it 'return 422 when a params is missing' do
-      post events_path, params: params.except!(:speaker), as: :json
+      post events_path, params: params.except!(:speaker), as: :json, headers: { Authorization: format_token }
       expect(response.status).to eq(422)
     end
 
     it 'return 422 when a validation failed' do
       data = params
-      post events_path, params: data[:event].delete(:name), as: :json
+      post events_path, params: data[:event].delete(:name), as: :json, headers: { Authorization: format_token }
       expect(response.status).to eq(422)
     end
 

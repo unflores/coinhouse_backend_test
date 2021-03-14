@@ -1,8 +1,5 @@
 class UsersController < ApplicationController
 
-  def new
-  end
-
   def create
     @user = User.find_or_create_by(email: user_params[:email]) do |user|
       user.first_name = user_params[:first_name]
