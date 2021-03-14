@@ -8,14 +8,14 @@ Rails.application.routes.draw do
 
   scope :api do
     resources :events, only: [:index, :create] do
+      post :attend
+      post :unregister
       collection do
+        post :attend
+        post :unregister
       end
     end
-    resources :users, only: [:new, :create] do
-      collection do
-      end
-    end
+    resources :users, only: [:new, :create]
+    post 'login', to: 'sessions#create'
   end
-
-  post 'login', to: 'sessions#create'
 end

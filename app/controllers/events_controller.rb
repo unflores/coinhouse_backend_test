@@ -1,7 +1,11 @@
 class EventsController < ApplicationController
 
-  before_action -> { set_user(:user); set_user(:speaker) }, only: [:create]
+  before_action -> { set_user(:speaker) }, only: [:create]
   before_action :authenticate, only: [:create]
+  before_action only: [:attend, :unregister] do
+    set_event
+    current_user || set_user(:current_user)
+  end
 
   def index
     query = format_params(:q) if params[:q]
@@ -11,20 +15,32 @@ class EventsController < ApplicationController
   end
 
   def create
-    @event = Event.create(user_id: @user.id, speaker_id: @speaker.id, **event_params)
+    @event = Event.create(user_id: @current_user.id, speaker_id: @speaker.id, **event_params)
 
     if @event.valid?
-      render json: { message: 'logged' }, status: :created
+      render json: { message: 'Event created' }, status: :created
     else
-      raise ArgumentError.new(format_argument_error(@event.errors.messages))
+      raise ArgumentError.new(@event.errors.full_messages)
     end
+  end
+
+  def attend
+    @event.attendees << @current_user
+
+    render json: { message: 'Registered' }, status: :created
+  end
+
+  def unregister
+    @event.attendees.delete @current_user
+
+    render json: { message: 'Unregistered' }, status: :ok
   end
 
   private
   def event_params
     event = format_params(:event)
-    event[:start_at] = DateTime.parse("#{event[:date]} #{event[:start_at]}")
-    event[:end_at] = DateTime.parse("#{event[:date]} #{event[:end_at]}")
+    event[:start_at] = DateTime.parse("#{event[:date]} #{event[:start_at]}") if event[:start_at]
+    event[:end_at] = DateTime.parse("#{event[:date]} #{event[:end_at]}") if event[:end_at]
 
     event.permit(:kind, :date, :start_at, :end_at, :name, :location, :description, :limit)
   end
@@ -42,5 +58,17 @@ class EventsController < ApplicationController
       user.first_name = data[:first_name]
       user.last_name = data[:last_name]
     })
+  end
+
+  def set_event
+    if params[:event_id]
+      data = { id: params[:event_id] }
+    else
+      data = event_params
+    end
+
+    @event = Event.find_by(data)
+
+    raise EventApi::Error.new('Event not found', :not_found) unless @event
   end
 end
