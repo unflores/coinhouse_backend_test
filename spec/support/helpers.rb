@@ -8,12 +8,11 @@ module Helpers
   end
 
   def build_event
-    date = DateTime.now
     event_params = {
       user_id: User.pluck(:id).sample,
       speaker_id: User.pluck(:id).sample,
       kind: rand(0..1),
-      date: date,
+      date: DateTime.now,
       start_at: DateTime.now.end_of_minute,
       end_at: DateTime.now.end_of_day,
       name: Faker::CryptoCoin.coin_name,
