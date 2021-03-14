@@ -21,4 +21,8 @@ class User < ApplicationRecord
 
   validates_presence_of :first_name, :last_name
   validates_uniqueness_of :token
+
+  def self.ransortable_attributes(auth_object = nil)
+    column_names - %w(password_digest token)
+  end
 end
