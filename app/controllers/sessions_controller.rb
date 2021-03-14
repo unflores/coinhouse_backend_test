@@ -10,6 +10,6 @@ class SessionsController < ApplicationController
     end
 
     @user.regenerate_token
-    render json: { message: 'success', token: @user.token }, status: :created
+    render json: { message: 'Logged', token: @user.token }, status: :created
   end
 end

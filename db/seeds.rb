@@ -13,12 +13,11 @@ Event.destroy_all
 end
 
 10.times do
-  kind = rand(0..1)
   date = Faker::Time.forward(days: 1, period: :morning)
   event_params = {
     user_id: User.pluck(:id).sample,
     speaker_id: User.pluck(:id).sample,
-    kind: kind,
+    kind: rand(0..1),
     date: date,
     start_at: Faker::Time.between_dates(from: date, to: date + 1.second),
     end_at: Faker::Time.between_dates(from: date + 1.second, to: date.end_of_day),
@@ -26,7 +25,7 @@ end
     location: Faker::WorldCup.stadium,
     description: Faker::Lorem.paragraph,
   }
-  event_params[:limit] = rand(1..5) if kind == 0
+  event_params[:limit] = rand(1..5) if event_params[:kind] == 0
 
   Event.create(event_params)
 end
