@@ -1,7 +1,7 @@
 class EventsController < ApplicationController
 
   before_action -> { set_user(:user); set_user(:speaker) }, only: [:create]
-  before_action :authenticate, only: [:index, :create]
+  before_action :authenticate, only: [:create]
 
   def index
     query = format_params(:q) if params[:q]

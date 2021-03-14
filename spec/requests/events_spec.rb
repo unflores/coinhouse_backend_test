@@ -37,7 +37,7 @@ RSpec.describe "Events", type: :request do
 
   describe "GET /index" do
     context 'without params' do
-      before(:each) { get events_path, as: :json, headers: { Authorization: format_token } }
+      before(:each) { get events_path, as: :json }
 
       it 'return 200' do
         expect(response.status).to eq(200)
@@ -57,7 +57,7 @@ RSpec.describe "Events", type: :request do
 
       it 'return search' do
         query[:q] = { id_eq: event.id }
-        get events_path(query), as: :json, headers: { Authorization: format_token }
+        get events_path(query), as: :json
 
         id = JSON.parse(response.body).first['id']
         expect(Event.find(id)).to eq event
@@ -65,7 +65,7 @@ RSpec.describe "Events", type: :request do
 
       it 'return last' do
         query[:page] = event.id - 1
-        get events_path(query), as: :json, headers: { Authorization: format_token }
+        get events_path(query), as: :json
 
         id = JSON.parse(response.body).first['id']
         expect(Event.find(id)).to eq event
@@ -73,7 +73,7 @@ RSpec.describe "Events", type: :request do
 
       it 'return nothing' do
         query[:per] = 0
-        get events_path(query), as: :json, headers: { Authorization: format_token }
+        get events_path(query), as: :json
 
         expect(JSON.parse(response.body)).to be_empty
       end
@@ -87,13 +87,13 @@ RSpec.describe "Events", type: :request do
     end
 
     it 'return 422 when a params is missing' do
-      post events_path, params: params.except!(:speaker), as: :json
+      post events_path, params: params.except!(:speaker), as: :json, headers: { Authorization: format_token }
       expect(response.status).to eq(422)
     end
 
     it 'return 422 when a validation failed' do
       data = params
-      post events_path, params: data[:event].delete(:name), as: :json
+      post events_path, params: data[:event].delete(:name), as: :json, headers: { Authorization: format_token }
       expect(response.status).to eq(422)
     end
 
