@@ -25,9 +25,9 @@ default: &default
 development:
   <<: *default
   database: event_api_development
-  username: <%= ENV['DBUSER'] %>
-  password: <%= ENV['DBPASSWORD'] %>
-  host: <%= ENV['DBHOST'] %>
+  username: <%= ENV['USER'] %>
+  password: <%= ENV['PASSWORD'] %>
+  host: <%= ENV['HOST'] %>
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.

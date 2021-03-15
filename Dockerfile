@@ -1,18 +1,24 @@
-FROM ruby:3.0
+FROM ruby:3.0.0
 
-RUN apt-get update -qq && apt-get install -y postgresql-client
+LABEL maintainer="Cesar Miran <casrmiran@gmail.com>"
+
+RUN apt-get update -qq && apt-get install -y yarn postgresql-client
+
 # throw errors if Gemfile has been modified since Gemfile.lock
 RUN bundle config --global frozen 1
 
-WORKDIR /app
+ENV INSTALL_PATH /app
+RUN mkdir -p $INSTALL_PATH
+WORKDIR $INSTALL_PATH
 
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
 COPY . .
 
-ENTRYPOINT ["./entrypoint.sh"]
+# Un-comment if there is multiple container of same image
+#ENTRYPOINT ["./entrypoint.sh"]
+
 EXPOSE 3000
 
-# Start the main process.
-CMD ["rails", "server", "-b", "0.0.0.0"]
+CMD ["rails", "server"]
