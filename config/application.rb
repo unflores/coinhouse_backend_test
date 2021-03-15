@@ -47,5 +47,18 @@ module EventApi
 
     #config.autoload_paths << Rails.root.join('app', 'graphql')
     config.autoload_paths << Rails.root.join('lib')
+
+    # We want to set up a custom logger which logs to STDOUT.
+    # Docker expects your application to log to STDOUT/STDERR and to be ran
+    # in the foreground.
+    config.log_level = :debug
+    config.log_tags  = [:subdomain, :uuid]
+    config.logger    = ActiveSupport::TaggedLogging.new(Logger.new(STDOUT))
+
+    # Since we're using Redis for Sidekiq, we might as well use Redis to back
+    # our cache store. This keeps our application stateless as well.
+    # config.cache_store = :redis_store, 'redis://redis:6379/0', { namespace: 'event_api::cache' }
+
+    config.active_job.queue_adapter = :sidekiq
   end
 end
