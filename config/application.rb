@@ -56,7 +56,7 @@ module EventApi
     logger.formatter = config.log_formatter
     config.log_level = :debug
     config.log_tags = [:subdomain, :uuid]
-    config.logger = ActiveSupport::TaggedLogging.new(logger)
+    #config.logger = ActiveSupport::TaggedLogging.new(logger)
 
     # Since we're using Redis for Sidekiq, we might as well use Redis to back
     # our cache store. This keeps our application stateless as well.
