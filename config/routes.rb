@@ -3,7 +3,6 @@ Rails.application.routes.draw do
   if Rails.env.development?
     mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "graphql#execute"
   end
-
   post "/graphql", to: "graphql#execute"
 
   scope :api do
@@ -18,4 +17,7 @@ Rails.application.routes.draw do
     resources :users, only: [:new, :create]
     post 'login', to: 'sessions#create'
   end
+
+  require 'sidekiq/web'
+  mount Sidekiq::Web => "/sidekiq"
 end
