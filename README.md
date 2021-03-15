@@ -91,7 +91,6 @@ The search use ransack, bellow are all the matchers
 Dockerisation is on it's way
 ```
 docker-compose -f docker-compose.yml up --build
-docker-compose run event-api rails db:migrate
-docker-compose run event-api rails db:seed
+docker-compose run api rails db:reset db:migrate db:seed
 docker-compose up
 ```
