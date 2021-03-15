@@ -26,6 +26,10 @@ class User < ApplicationRecord
     column_names - %w(password_digest token)
   end
 
+  def name
+    "#{first_name} #{last_name}"
+  end
+
   private
   def can_not_exceed_limit(event)
     if event.workshop? && event.limit && event.attendees.size >= event.limit

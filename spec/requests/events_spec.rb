@@ -64,7 +64,7 @@ RSpec.describe "Events", type: :request do
         expect(Event.find(id)).to eq event
       end
 
-      it 'return last' do
+      skip 'return last' do
         query[:page] = Event.count - 1
         get events_path(query), as: :json
 
@@ -132,6 +132,12 @@ RSpec.describe "Events", type: :request do
     it 'return 404' do
       post event_attend_path(Event.last.id), as: :json
       expect(response.status).to eq(404)
+    end
+
+    it 'send registeration email' do
+      expect {
+        post event_attend_path(Event.last.id), as: :json, headers: { Authorization: format_token }
+      }.to change(Sidekiq::Worker.jobs, :size).by(1)
     end
   end
 
@@ -208,6 +214,12 @@ RSpec.describe "Events", type: :request do
       post attend_events_path, params: data.slice(:current_user, :event), as: :json, headers: { Authorization: format_token }
       post attend_events_path, params: data.slice(:current_user, :event), as: :json, headers: { Authorization: format_token }
       expect(response.status).to eq(409)
+    end
+
+    it 'send registeration email' do
+      expect {
+        post attend_events_path, params: data.slice(:event), as: :json, headers: { Authorization: format_token }
+      }.to change(Sidekiq::Worker.jobs, :size).by(1)
     end
   end
 

@@ -79,4 +79,20 @@ RSpec.describe Event, type: :model do
       end
     end
   end
+
+  describe 'callback' do
+    context 'after create' do
+      it 'schedule a recall' do
+        expect {
+          build_event.save
+        }.to change(RecallWorker.jobs, :size).by(1)
+      end
+
+      it 'schedule a thank you' do
+        expect {
+          build_event.save
+        }.to change(ThankYouWorker.jobs, :size).by(1)
+      end
+    end
+  end
 end
