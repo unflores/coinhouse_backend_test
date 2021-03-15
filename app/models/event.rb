@@ -15,7 +15,17 @@ class Event < ApplicationRecord
   validate :can_not_be_in_the_past, :can_not_start_in_the_past, :can_not_start_after_end
   :must_be_the_same_day
 
+  # after_validation :parse_date_time
+
+  after_create :schedule_notifications
+
   private
+  # def self.parse_date_time
+  #   date = date.to_date
+  #   start_at = DateTime.parse("#{date} #{start_at.strftime("%H:%M:%S %z")}")
+  #   end_at = DateTime.parse("#{date} #{end_at.strftime("%H:%M:%S %z")}")
+  # end
+
   def can_not_exceed_limit(_)
     raise ArgumentError.new('Event is full') if workshop? && limit && attendees.size >= limit
   end
@@ -34,5 +44,10 @@ class Event < ApplicationRecord
 
   def must_be_the_same_day
     errors.add(:start_at, 'can not be greater than end_at') if start_at && end_at && start_at.to_date != end_at.to_date
+  end
+
+  def schedule_notifications
+    RecallWorker.perform_at(start_at - 1.day, id)
+    ThankYouWorker.perform_at(end_at + 1.hour, id)
   end
 end
