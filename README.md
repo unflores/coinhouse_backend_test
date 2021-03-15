@@ -1,12 +1,12 @@
 # README
 
-![alt text](https://github.com/cmiran/coinhouse_backend_test/blob/dev/sql-schema.jpg)
+![alt text](https://github.com/cmiran/coinhouse_backend_test/blob/dev/schema_sql.jpg)
 
-ruby 3.0.0\n
-rails 6.3.1
+ruby 3.0.0  
+rails 6.3.1  
 
-*Un-native gems:*
-jbuilder, redis, bcrypt, graphql, graphiql,  pry, ransack, sidekiq, redis-rails, rspec-rails, rspec-sidekiq, faker, letter-opener
+*Un-native gems:*  
+jbuilder, redis, bcrypt, graphql, graphiql,  pry, ransack, sidekiq, redis-rails, rspec-rails, rspec-sidekiq, faker, letter-opener  
 
 ```
 # Drop, create, migrate, populate db
@@ -30,6 +30,7 @@ curl -X GET -H "Authorization: Token token=<token>" http://localhost:3000/api/ev
 curl -X GET -d q='{"location_i_cont"=>"arena","user_first_name_eq"=>"Sylvain"}' http://localhost:3000/api/events
 
 ...
+```
 
 Dockerisation is on it's way
 ```
@@ -37,7 +38,7 @@ docker-compose -f docker-compose.yml up --build
 docker-compose run api rails db:reset db:migrate db:seed
 docker-compose up
 ```
-```
+
 The search use ransack, bellow are all the matchers
 | Predicate | Description | Notes |
 | ------------- | ------------- |-------- |
