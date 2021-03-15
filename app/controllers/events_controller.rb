@@ -26,8 +26,8 @@ class EventsController < ApplicationController
 
   def attend
     @event.attendees << @current_user
-
     EventMailer.with(user: @current_user, event: @event).registration.deliver_later
+
     render json: { message: 'Registered' }, status: :created
   end
 
@@ -68,7 +68,6 @@ class EventsController < ApplicationController
     else
       data = event_params
     end
-
     @event = Event.find_by(data)
 
     raise EventApi::Error.new('Event not found', :not_found) unless @event

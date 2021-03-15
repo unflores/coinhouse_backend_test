@@ -15,7 +15,7 @@ class Event < ApplicationRecord
   validate :can_not_be_in_the_past, :can_not_start_in_the_past, :can_not_start_after_end
   :must_be_the_same_day
 
-  # after_validation :parse_date_time
+  # after_validation :parse_date_time, if: :valid?
 
   after_create :schedule_notifications
 

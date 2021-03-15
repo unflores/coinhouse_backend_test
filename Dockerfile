@@ -16,9 +16,7 @@ RUN bundle install
 
 COPY . .
 
-# Un-comment if there is multiple container of same image
-#ENTRYPOINT ["./entrypoint.sh"]
-
+ENTRYPOINT ["./entrypoint.sh"]
 EXPOSE 3000
 
-CMD ["rails", "server"]
+CMD ["rails", "server", "-b", "0.0.0.0"]

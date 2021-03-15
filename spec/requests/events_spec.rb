@@ -59,7 +59,6 @@ RSpec.describe "Events", type: :request do
       it 'return search' do
         query[:q] = { id_eq: event.id }
         get events_path(query), as: :json
-
         id = JSON.parse(response.body).first['id']
         expect(Event.find(id)).to eq event
       end
@@ -67,7 +66,6 @@ RSpec.describe "Events", type: :request do
       skip 'return last' do
         query[:page] = Event.count - 1
         get events_path(query), as: :json
-
         id = JSON.parse(response.body).first['id']
         expect(Event.find(id)).to eq event
       end
@@ -75,7 +73,6 @@ RSpec.describe "Events", type: :request do
       it 'return nothing' do
         query[:per] = 0
         get events_path(query), as: :json
-
         expect(JSON.parse(response.body)).to be_empty
       end
     end
