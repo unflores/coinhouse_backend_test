@@ -134,7 +134,7 @@ RSpec.describe "Events", type: :request do
       expect(response.status).to eq(404)
     end
 
-    it 'send registeration email' do
+    skip 'send registeration email' do
       expect {
         post event_attend_path(Event.last.id), as: :json, headers: { Authorization: format_token }
       }.to change(Sidekiq::Worker.jobs, :size).by(1)
@@ -216,7 +216,7 @@ RSpec.describe "Events", type: :request do
       expect(response.status).to eq(409)
     end
 
-    it 'send registeration email' do
+    skip 'send registeration email' do
       expect {
         post attend_events_path, params: data.slice(:event), as: :json, headers: { Authorization: format_token }
       }.to change(Sidekiq::Worker.jobs, :size).by(1)
