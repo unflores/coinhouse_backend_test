@@ -2,7 +2,7 @@
 
 ![alt text](https://github.com/cmiran/coinhouse_backend_test/blob/dev/sql-schema.jpg)
 
-ruby 3.0.0
+ruby 3.0.0\n
 rails 6.3.1
 
 *Un-native gems:*
@@ -30,6 +30,13 @@ curl -X GET -H "Authorization: Token token=<token>" http://localhost:3000/api/ev
 curl -X GET -d q='{"location_i_cont"=>"arena","user_first_name_eq"=>"Sylvain"}' http://localhost:3000/api/events
 
 ...
+
+Dockerisation is on it's way
+```
+docker-compose -f docker-compose.yml up --build
+docker-compose run api rails db:reset db:migrate db:seed
+docker-compose up
+```
 ```
 The search use ransack, bellow are all the matchers
 | Predicate | Description | Notes |
@@ -87,10 +94,3 @@ The search use ransack, bellow are all the matchers
 | `*_not_i_cont_all` | Does not contain all of values with case insensitive | |
 | `*_true` | is true | |
 | `*_false` | is false | |
-
-Dockerisation is on it's way
-```
-docker-compose -f docker-compose.yml up --build
-docker-compose run api rails db:reset db:migrate db:seed
-docker-compose up
-```

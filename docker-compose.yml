@@ -12,10 +12,6 @@ services:
       - '.:/app'
     env_file:
       - .env
-        #     environment:
-        #       - DBHOST=postgresql
-        #       - DBUSER=postgres
-        #       - DBPASSWORD=password
 
   postgres:
     image: postgres:12
