@@ -12,9 +12,9 @@ gem 'puma', '~> 5.0'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.7'
 # Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 4.0'
+gem 'redis'
 # Use Active Model has_secure_password
-gem 'bcrypt', '~> 3.1.7'
+gem 'bcrypt'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
@@ -31,6 +31,8 @@ gem 'graphql'
 gem 'pry'
 # Search
 gem 'ransack'
+# Background processing
+gem 'sidekiq'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -44,6 +46,8 @@ end
 group :test do
   # Ensure clean database state
   # gem 'database_cleaner-active_record'
+  # RSpec for Sidekiq
+  gem 'rspec-sidekiq'
 end
 
 group :development do
@@ -52,6 +56,8 @@ group :development do
   gem 'spring'
   # Mount the GraphiQL IDE in Ruby on Rails
   gem "graphiql-rails"
+  # Send email in browser
+  gem "letter_opener"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

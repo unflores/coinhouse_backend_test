@@ -15,9 +15,9 @@ class EventsController < ApplicationController
   end
 
   def create
-    @event = Event.create(user_id: @current_user.id, speaker_id: @speaker.id, **event_params)
+    @event = Event.new(user_id: @current_user.id, speaker_id: @speaker.id, **event_params)
 
-    if @event.valid?
+    if @event.save
       render json: { message: 'Event created' }, status: :created
     else
       raise ArgumentError.new(@event.errors.full_messages)
@@ -27,6 +27,7 @@ class EventsController < ApplicationController
   def attend
     @event.attendees << @current_user
 
+    EventMailer.with(user: @current_user, event: @event).registration.deliver_later
     render json: { message: 'Registered' }, status: :created
   end
 
@@ -39,6 +40,7 @@ class EventsController < ApplicationController
   private
   def event_params
     event = format_params(:event)
+    # todo put date parsing in model
     event[:start_at] = DateTime.parse("#{event[:date]} #{event[:start_at]}") if event[:start_at]
     event[:end_at] = DateTime.parse("#{event[:date]} #{event[:end_at]}") if event[:end_at]
 
