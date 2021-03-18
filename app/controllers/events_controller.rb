@@ -55,7 +55,6 @@ class EventsController < ApplicationController
 
   def set_user(sym)
     data = user_params(sym)
-
     instance_variable_set("@#{sym}", User.find_or_create_by(email: data[:email]) { |user|
       user.first_name = data[:first_name]
       user.last_name = data[:last_name]

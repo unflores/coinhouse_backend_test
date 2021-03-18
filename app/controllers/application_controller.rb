@@ -3,6 +3,8 @@ class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Token::ControllerMethods
   include ActionController::HttpAuthentication::Token
 
+  # Questions: Why? What does this do?
+  #[/[^\\W\n]*/] -> match anything up to first newline
   rescue_from ActionController::ParameterMissing do |e|
     render json: { error: e.message[/[^\\W\n]*/].capitalize }, status: :not_found
   end
@@ -29,6 +31,7 @@ class ApplicationController < ActionController::API
 
   def format_params(sym)
     data = params.require(sym)
+    # Questions: Why?
     data = JSON.parse(data.gsub('=>', ':')) if data.is_a? String
     data = ActionController::Parameters.new(data) unless data.is_a? ActionController::Parameters
     data

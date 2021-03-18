@@ -1,5 +1,5 @@
 require 'rails_helper'
-
+# Question: How could these tests be ameliorated? What is one of the tradeoffs that is being made in doing request tests vs other types of tests?
 RSpec.describe "Events", type: :request do
   def format_token
     ActionController::HttpAuthentication::Token.encode_credentials(User.last.token)
